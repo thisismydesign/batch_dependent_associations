@@ -1,5 +1,4 @@
-require "batch_dependent_associations/version"
+require_relative "batch_dependent_associations/version"
 
 module BatchDependentAssociations
-  # Your code goes here...
 end

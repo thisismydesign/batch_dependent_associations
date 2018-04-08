@@ -1,4 +1,16 @@
 require "bundler/setup"
+
+def ran_by_guard
+  ARGV.any? { |e| e =~ %r{guard-rspec} }
+end
+
+unless ran_by_guard
+  require "simplecov"
+  SimpleCov.add_filter %w[spec config]
+  require "coveralls"
+  Coveralls.wear!
+end
+
 require "batch_dependent_associations"
 
 RSpec.configure do |config|
@@ -12,3 +24,5 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+RSPEC_ROOT = File.dirname __FILE__
