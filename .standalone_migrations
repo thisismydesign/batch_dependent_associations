@@ -1,7 +1,0 @@
-# Used for testing with ActiveRecord
-db:
-    seeds: spec/example_project/db/seeds.rb
-    migrate: spec/example_project/db/migrate
-    schema: spec/example_project/db/schema.rb
-config:
-    database: spec/example_project/db/config.yml

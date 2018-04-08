@@ -13,6 +13,8 @@ end
 
 require "batch_dependent_associations"
 
+require "active_record"
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
@@ -26,3 +28,5 @@ RSpec.configure do |config|
 end
 
 RSPEC_ROOT = File.dirname __FILE__
+
+Dir[Pathname.new(RSPEC_ROOT).join("example_project", "models", "**", "*.rb")].each { |f| require f }
