@@ -21,6 +21,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "activesupport"
 
+  spec.add_development_dependency "standalone_migrations"
+  spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "autowow"
   spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "coveralls"
