@@ -48,6 +48,32 @@ RSpec.describe BatchDependentAssociations do
         expect { SafePerson.first.destroy }.to make_database_queries(count: 3, matching: /SELECT  "bank_accounts"(.+) LIMIT/)
       end
     end
+
+    context "dependent destroy" do
+      it "calls destroy on associations" do
+        persist_with_associations(clazz: SafePerson, association_clazz: BankAccount, association_count: 1)
+        safe_person = SafePerson.first
+        bank_account = double
+
+        expect(safe_person).to receive_message_chain(:bank_accounts, :find_each).and_yield(bank_account)
+        expect(bank_account).to receive(:destroy)
+
+        safe_person.destroy
+      end
+    end
+
+    context "dependent delete_all" do
+      it "calls delete on associations" do
+        persist_with_associations(clazz: SafePerson, association_clazz: Friend, association_count: 1)
+        safe_person = SafePerson.first
+        friend = double
+
+        expect(safe_person).to receive_message_chain(:friends, :find_each).and_yield(friend)
+        expect(friend).to receive(:delete)
+
+        safe_person.destroy
+      end
+    end
   end
 end
 

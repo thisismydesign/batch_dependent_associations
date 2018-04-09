@@ -9,7 +9,7 @@
 
 As the [discussion](https://github.com/rails/rails/issues/22510#issuecomment-162448557) in [this](https://github.com/rails/rails/issues/22510) open Rails issue from 2015 points out `dependent: :(destroy|delete)` loads the entire relation and does not batch. This makes the usage of this otherwise great feature very dangerous and disencouraged at the very least because of possible OOM issues.
 
-This gem is the sweet spot between the memory safety of custom batching and the convenience of letting Rails take care of dependencies. When included it [prepends](https://medium.com/appaloosa-store-engineering/caution-when-using-before-destroy-with-model-association-71600b8bfed2) a `before_destroy` hook that removes all `has_many` associations with `dependent` option. It will call `destroy` or `delete` based on how `dependent` is defined.
+This gem is the sweet spot between the memory safety of custom batching and the convenience of letting Rails take care of dependencies. When included, it [prepends](https://medium.com/appaloosa-store-engineering/caution-when-using-before-destroy-with-model-association-71600b8bfed2) a `before_destroy` hook that removes all `has_many` associations with certain `dependent` options. It will call `destroy` or `delete` if `dependent` is set to `:destroy` or `:delete_all` respectively. `nullify` and `restrict_with_(error|exception)` don't remove associations. For the documentation of `dependent` options refer to [Active Record Associations 4.2.2.4](http://guides.rubyonrails.org/association_basics.html) (currently it incorrectly lists `delete` instead of `delete_all`).
 
 ## Installation
 

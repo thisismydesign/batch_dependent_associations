@@ -13,8 +13,9 @@ module BatchDependentAssociations
   private
 
   def batch_dependent_associations
-    self.class.reflect_on_all_associations(:has_many).select { |v| v.options.has_key?(:dependent) }.each do |association|
-      send(association.name).find_each(batch_size: 5, &association.options[:dependent])
+    self.class.reflect_on_all_associations(:has_many).select { |v| v.options.has_key?(:dependent) && [:destroy, :delete_all].include?(v.options[:dependent]) }.each do |association|
+      send(association.name).find_each(batch_size: 5, &:destroy) if association.options[:dependent].eql?(:destroy)
+      send(association.name).find_each(batch_size: 5, &:delete) if association.options[:dependent].eql?(:delete_all)
     end
   end
 end
