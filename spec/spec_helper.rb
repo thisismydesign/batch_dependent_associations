@@ -14,6 +14,8 @@ end
 require "batch_dependent_associations"
 
 require "active_record"
+db_config = YAML::load(File.open('db/config.yml'))['test']
+ActiveRecord::Base.establish_connection(db_config)
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
