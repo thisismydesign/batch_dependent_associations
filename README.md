@@ -29,8 +29,7 @@ TODO: Write usage instructions here
 ```bash
 git clone git@github.com:thisismydesign/batch_dependent_associations.git
 bundle
-bundle exec rake db:create db:migrate # Ignore schema.rb error: https://source.xing.com/growth/inquiry/pull/92
-RAILS_ENV=test bundle exec rake db:migrate # Needed because if above error
+RAILS_ENV=test bundle exec rake db:drop db:create db:migrate # Ignore schema.rb error: https://source.xing.com/growth/inquiry/pull/92
 bundle exec rake
 ```
 
