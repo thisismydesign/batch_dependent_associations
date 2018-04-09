@@ -36,6 +36,7 @@ class SafePerson < ActiveRecord::Base
   include BatchDependentAssociations
 
   has_many :bank_accounts, dependent: :destroy
+  has_many :friends, dependent: :delete_all
 end
 ```
 
@@ -44,10 +45,13 @@ Is equivalent to:
 ```ruby
 class SafePerson < ActiveRecord::Base
   has_many :bank_accounts, dependent: :destroy
+  has_many :friends, dependent: :delete_all
+
   before_destroy :batch_dependent_associations, prepend: true
   
   def batch_dependent_associations
     bank_accounts.find_each(batch_size: 5, &:destroy)
+    friends.find_each(batch_size: 5, &:delete)
   end
 end
 ```
