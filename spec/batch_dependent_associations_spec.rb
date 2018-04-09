@@ -17,8 +17,35 @@ RSpec.describe BatchDependentAssociations do
 
     context "10 associated entity" do
       it "executes one select" do
-        persist_with_associations(clazz: UnsafePerson, association_clazz: BankAccount, association_count: 10)
+        persist_with_associations(clazz: UnsafePerson, association_clazz: BankAccount, association_count: 9)
         expect { UnsafePerson.first.destroy }.to make_database_queries(count: 1, matching: /SELECT "bank_accounts"/)
+      end
+    end
+  end
+
+  describe "safe model with batching" do
+    after do
+      SafePerson.destroy_all
+    end
+
+    context "number of associated entities below batch limit" do
+      it "executes one select" do
+        persist_with_associations(clazz: SafePerson, association_clazz: BankAccount, association_count: 1)
+        expect { SafePerson.first.destroy }.to make_database_queries(count: 1, matching: /SELECT  "bank_accounts"(.+) LIMIT/)
+      end
+    end
+
+    context "number of associated entities above batch limit" do
+      it "executes 2 selects" do
+        persist_with_associations(clazz: SafePerson, association_clazz: BankAccount, association_count: 9)
+        expect { SafePerson.first.destroy }.to make_database_queries(count: 2, matching: /SELECT  "bank_accounts"(.+) LIMIT/)
+      end
+    end
+
+    context "number of associated entities above 2 times batch limit" do
+      it "executes 3 selects" do
+        persist_with_associations(clazz: SafePerson, association_clazz: BankAccount, association_count: 13)
+        expect { SafePerson.first.destroy }.to make_database_queries(count: 3, matching: /SELECT  "bank_accounts"(.+) LIMIT/)
       end
     end
   end

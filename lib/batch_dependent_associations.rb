@@ -6,6 +6,7 @@ module BatchDependentAssociations
   extend ActiveSupport::Concern
 
   included do
+    # Why prepend: https://medium.com/appaloosa-store-engineering/caution-when-using-before-destroy-with-model-association-71600b8bfed2
     before_destroy :batch_dependent_associations, prepend: true
   end
 
