@@ -1,4 +1,5 @@
 require "bundler/setup"
+require "db-query-matchers"
 
 RSPEC_ROOT = File.dirname __FILE__
 
