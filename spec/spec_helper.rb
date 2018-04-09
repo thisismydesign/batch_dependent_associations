@@ -1,5 +1,7 @@
 require "bundler/setup"
 
+RSPEC_ROOT = File.dirname __FILE__
+
 def ran_by_guard
   ARGV.any? { |e| e =~ %r{guard-rspec} }
 end
@@ -14,7 +16,7 @@ end
 require "batch_dependent_associations"
 
 require "active_record"
-db_config = YAML::load(File.open('db/config.yml'))['test']
+db_config = YAML::load(File.open(Pathname.new(RSPEC_ROOT).join("example_project", "db", "config.yml")))['test']
 ActiveRecord::Base.establish_connection(db_config)
 
 RSpec.configure do |config|
@@ -28,7 +30,5 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
-
-RSPEC_ROOT = File.dirname __FILE__
 
 Dir[Pathname.new(RSPEC_ROOT).join("example_project", "models", "**", "*.rb")].each { |f| require f }
