@@ -1,3 +1,18 @@
+def persist_with_associations(clazz:, association_clazz:, association_count:)
+  instance = clazz.create!
+  association_count.times do
+    association_clazz.create!(person_id: instance.id)
+  end
+end
+
+def undefine(clazz, const)
+  clazz.send(:remove_const, const) if clazz.const_defined?(const)
+end
+
+def custom_batch_size
+  5
+end
+
 RSpec.describe BatchDependentAssociations do
   it "has a version number" do
     expect(BatchDependentAssociations::VERSION).not_to be nil
@@ -28,24 +43,39 @@ RSpec.describe BatchDependentAssociations do
       SafePerson.destroy_all
     end
 
-    context "number of associated entities below batch limit" do
-      it "executes one select" do
-        persist_with_associations(clazz: SafePerson, association_clazz: BankAccount, association_count: 1)
-        expect { SafePerson.first.destroy }.to make_database_queries(count: 1, matching: /SELECT  "bank_accounts"(.+) LIMIT/)
-      end
-    end
+    # Class variable needed for string interpolation: https://stackoverflow.com/questions/14374903/rails-rspec-it-method-description-and-string-interpolation
+    let(:default_batch_size) { 1000 }
 
-    context "number of associated entities above batch limit" do
-      it "executes 2 selects" do
-        persist_with_associations(clazz: SafePerson, association_clazz: BankAccount, association_count: 9)
-        expect { SafePerson.first.destroy }.to make_database_queries(count: 2, matching: /SELECT  "bank_accounts"(.+) LIMIT/)
+    context "batch size of #{custom_batch_size}" do
+      before do
+        SafePerson.dependent_associations_batch_size = custom_batch_size
       end
-    end
+      
+      after do
+        SafePerson.dependent_associations_batch_size = default_batch_size
+      end
 
-    context "number of associated entities above 2 times batch limit" do
-      it "executes 3 selects" do
-        persist_with_associations(clazz: SafePerson, association_clazz: BankAccount, association_count: 13)
-        expect { SafePerson.first.destroy }.to make_database_queries(count: 3, matching: /SELECT  "bank_accounts"(.+) LIMIT/)
+      context "number of associated entities below batch limit of #{custom_batch_size}" do
+        it "executes one select" do
+          persist_with_associations(clazz: SafePerson, association_clazz: BankAccount, association_count: Random.new.rand(1 .. custom_batch_size - 1))
+          expect { SafePerson.first.destroy }.to make_database_queries(count: 1, matching: /SELECT  "bank_accounts"(.+) LIMIT/)
+        end
+      end
+
+      context "number of associated entities above batch limit of #{custom_batch_size} but below 2 times batch limit of of #{custom_batch_size*2}" do
+        it "executes 2 selects" do
+          persist_with_associations(clazz: SafePerson, association_clazz: BankAccount, association_count: Random.new.rand(custom_batch_size .. custom_batch_size * 2 - 1))
+          expect { SafePerson.first.destroy }.to make_database_queries(count: 2, matching: /SELECT  "bank_accounts"(.+) LIMIT/)
+        end
+      end
+
+      context "number of associated entities above batch limit of #{custom_batch_size}" do
+        it "executes 1 select more per batch limit reached" do
+          1.upto(5) do |n|
+            persist_with_associations(clazz: SafePerson, association_clazz: BankAccount, association_count: Random.new.rand(custom_batch_size * n .. custom_batch_size * (n + 1) - 1))
+            expect { SafePerson.first.destroy }.to make_database_queries(count: 1 + n, matching: /SELECT  "bank_accounts"(.+) LIMIT/)
+          end
+        end
       end
     end
 
@@ -97,15 +127,4 @@ RSpec.describe BatchDependentAssociations do
       end
     end
   end
-end
-
-def persist_with_associations(clazz:, association_clazz:, association_count:)
-  instance = clazz.create!
-  association_count.times do
-    association_clazz.create!(person_id: instance.id)
-  end
-end
-
-def undefine(clazz, const)
-  clazz.send(:remove_const, const) if clazz.const_defined?(const)
 end
