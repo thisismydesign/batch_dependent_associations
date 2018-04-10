@@ -2,6 +2,8 @@
 
 #### Use dependent associations with Rails safely, with automatic batching.
 
+*You are viewing the README of the development version. You can find the README of the latest release (v0.1.0) [here](https://github.com/thisismydesign/batch_dependent_associations/tree/v0.1.0).*
+
 | Branch | Status |
 | ------ | ------ |
 | Release | [![Build Status](https://travis-ci.org/thisismydesign/batch_dependent_associations.svg?branch=release)](https://travis-ci.org/thisismydesign/batch_dependent_associations)   [![Coverage Status](https://coveralls.io/repos/github/thisismydesign/batch_dependent_associations/badge.svg?branch=release)](https://coveralls.io/github/thisismydesign/batch_dependent_associations?branch=release)   [![Gem Version](https://badge.fury.io/rb/batch_dependent_associations.svg)](https://badge.fury.io/rb/batch_dependent_associations)   [![Total Downloads](http://ruby-gem-downloads-badge.herokuapp.com/batch_dependent_associations?type=total)](https://rubygems.org/gems/batch_dependent_associations) |
@@ -53,6 +55,19 @@ class SafePerson < ActiveRecord::Base
     bank_accounts.find_each(batch_size: 5, &:destroy)
     friends.find_each(batch_size: 5, &:delete)
   end
+end
+```
+
+### Custom batch size
+
+Since [v0.2.0](https://github.com/thisismydesign/batch_dependent_associations/releases/tag/v0.2.0)
+
+Can be set via the `dependent_associations_batch_size` class variable. Default is `1000` (same as Rails default).
+
+```ruby
+class SafePerson < ActiveRecord::Base
+  include BatchDependentAssociations
+  self.dependent_associations_batch_size = 500
 end
 ```
 
