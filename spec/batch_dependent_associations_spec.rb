@@ -74,6 +74,28 @@ RSpec.describe BatchDependentAssociations do
         safe_person.destroy
       end
     end
+
+    context "throwaway test class" do
+      let(:test_class) { :Test }
+
+      before do
+        class Test < ActiveRecord::Base; end
+        Test.send(:include, BatchDependentAssociations)
+      end
+
+      after do
+        undefine(Object, test_class)
+      end
+
+      it "sets default batch size to 1000" do
+        expect(Test.dependent_associations_batch_size).to eq(1000)
+      end
+  
+      it "default batch size can be set" do
+        Test.dependent_associations_batch_size = 5
+        expect(Test.dependent_associations_batch_size).to eq(5)
+      end
+    end
   end
 end
 
@@ -82,4 +104,8 @@ def persist_with_associations(clazz:, association_clazz:, association_count:)
   association_count.times do
     association_clazz.create!(person_id: instance.id)
   end
+end
+
+def undefine(clazz, const)
+  clazz.send(:remove_const, const) if clazz.const_defined?(const)
 end
