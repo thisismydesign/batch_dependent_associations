@@ -2,7 +2,7 @@
 
 #### Use dependent associations with Rails safely, with automatic batching.
 
-*You are viewing the README of the development version. You can find the README of the latest release (v0.1.0) [here](https://github.com/thisismydesign/batch_dependent_associations/tree/v0.1.0).*
+*You are viewing the README of version [v0.2.0](https://github.com/thisismydesign/batch_dependent_associations/releases/tag/v0.2.0). You can find other releases [here](https://github.com/thisismydesign/batch_dependent_associations/releases).*
 
 | Branch | Status |
 | ------ | ------ |
