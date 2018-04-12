@@ -43,7 +43,6 @@ RSpec.describe BatchDependentAssociations do
       SafePerson.destroy_all
     end
 
-    # Class variable needed for string interpolation: https://stackoverflow.com/questions/14374903/rails-rspec-it-method-description-and-string-interpolation
     let(:default_batch_size) { 1000 }
 
     context "batch size of #{custom_batch_size}" do
