@@ -52,8 +52,8 @@ class SafePerson < ActiveRecord::Base
   before_destroy :batch_dependent_associations, prepend: true
   
   def batch_dependent_associations
-    bank_accounts.find_each(batch_size: 5, &:destroy)
-    friends.find_each(batch_size: 5, &:delete)
+    bank_accounts.find_each(&:destroy)
+    friends.find_each(&:delete)
   end
 end
 ```
