@@ -4,6 +4,10 @@ require "rspec/core/rake_task"
 require "standalone_migrations"
 StandaloneMigrations::Tasks.load_tasks
 
+# Fix for https://github.com/thuss/standalone-migrations/issues/143
+configurator = StandaloneMigrations::Configurator.new
+ENV['SCHEMA'] = configurator.schema
+
 RSpec::Core::RakeTask.new(:spec)
 
 require "logger"

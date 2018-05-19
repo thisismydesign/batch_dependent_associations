@@ -76,7 +76,7 @@ end
 ```bash
 git clone git@github.com:thisismydesign/batch_dependent_associations.git
 bundle
-RAILS_ENV=test bundle exec rake db:drop db:create db:migrate # Ignore schema.rb error: https://github.com/thuss/standalone-migrations/issues/143
+RAILS_ENV=test bundle exec rake db:drop db:create db:migrate
 bundle exec rake
 ```
 
