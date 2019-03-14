@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "activesupport"
+  spec.add_dependency "activesupport", '4.2.11.1'
 
   spec.add_development_dependency "standalone_migrations"
   spec.add_development_dependency "sqlite3"
